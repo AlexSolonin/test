@@ -107,7 +107,7 @@ class GiftService
                     default:
                        $prizeAllType = $this->em->getRepository(Prize::class)->findAll();
 
-                       if (isset($prizeAllType)) {
+                       if (count($prizeAllType) > 0) {
                            $prizeMax = count($prizeAllType);
                            $prizeId = mt_rand(0, $prizeMax - 1);
                            $prizeEn = $prizeAllType[$prizeId];
