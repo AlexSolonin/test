@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Personal Area{% endblock %}
+
+{% block body %}
+    <h1>Personal Area</h1>
+    <h2>User: {{ user.name }}</h2>
+    <form name="button" method="post" action="{{ path('user_personal') }}">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <input type="hidden" name="start" value="">
+        <button type="submit">Start</button>
+    </form>
+
+    <form name="button" method="post" action="{{ path('user_personal') }}">
+        <input type="number" name="convert" value="" placeholder="input money" max="{{ money }}" min = "1">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <button type="submit">Convert</button>
+    </form>
+
+    <h2>Bonuses: {{ bonus }}</h2>
+    <h2>Money: {{ money }}</h2>
+    <h3>Gifts:</h3>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for prize in prizes %}
+                <tr>
+                    <td>{{ prize.id }}</td>
+                    <td>{{ prize.name }}</td>
+                    <td>{{ prize.description }}</td>
+                    <td>
+                        <form name="button" method="post" action="{{ path('user_personal') }}">
+                            <input type="hidden" name="prize_delete_id" value="{{ prize.id }}">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form name="button" method="post" action="{{ path('user_personal') }}">
+                            <input type="hidden" name="prize_delivery_id" value="{{ prize.id }}">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit">Delivery</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+</table>
+    <a href="{{ path('user_index') }}">back to main</a>
+
+{% endblock %}
