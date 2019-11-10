@@ -74,6 +74,7 @@ class GiftService
         $i=0;
             do {
                 $giftType = mt_rand(0, 2);
+
                 switch ($giftType) {
                     case 0:
                         $moneyMin = $this->getSetting('money_min');
@@ -132,7 +133,6 @@ class GiftService
                            }
 
                        }
-
                 }
             } while ($i<10);
 
@@ -163,6 +163,7 @@ class GiftService
 
     private function getSetting($name) {
         $settings = $this->em->getRepository(Setting::class)->findAll();
+
         foreach ($settings as $setting ) {
 
             if ($setting->getName() == $name) {
@@ -173,4 +174,5 @@ class GiftService
 
         return isset($value) ? $value : false;
     }
+
 }

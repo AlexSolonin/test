@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\LoginType;
 use App\Form\UserType;
+use App\Service\ConvertService;
 use App\Service\GiftService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,11 +42,12 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             $password = md5($formData->getPassword());
-            $queryUser = $this->em->getRepository(User::class)->findOneBy(
-                [
-                    'email' => $formData->getEmail()
-                ]
-            );
+            $queryUser = $this->em->getRepository(User::class)
+                ->findOneBy(
+                    [
+                        'email' => $formData->getEmail()
+                    ]
+                );
 
             if (isset($queryUser) && $queryUser->getPassword() == $password) {
                 $form = $this->createForm(LoginType::class, $user);
@@ -104,6 +106,41 @@ class UserController extends AbstractController
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/personal", name="user_personal", methods={"GET","POST"})
+     * @param Request $request
+     * @param GiftService $giftService
+     * @param ConvertService $convertService
+     * @return Response
+     */
+    public function personal(Request $request, GiftService $giftService, ConvertService $convertService): Response
+    {
+        $userId = $request->request->get('user_id');
+        $queryUser = $this->em->getRepository(User::class)
+            ->findOneBy(
+                [
+                    'id' => $userId
+                ]
+            );
+
+        if (isset($_POST['user_id']) && isset($_POST['start'])) {
+            $giftService->selectGift($queryUser->getId());
+        }
+
+        if (isset($_POST['convert']) && isset($_POST['user_id'])) {
+            $convertService->convert($queryUser->getId(), $_POST['convert']);
+        }
+
+        $giftService->getGiftList($queryUser->getId());
+
+        return $this->render('user/personal.twig', [
+            'user' => $queryUser,
+            'bonus' =>$giftService->giftList['bonus'],
+            'money' =>round($giftService->giftList['money'], 2),
+            'prizes' =>$giftService->giftList['prize'],
         ]);
     }
 

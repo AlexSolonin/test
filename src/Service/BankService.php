@@ -23,8 +23,10 @@ class BankService
         $result = $this->sendPost($transferArray);
 
         if (isset($result)) {
+
             return true;
         } else {
+
             return false;
         }
     }
@@ -52,10 +54,12 @@ class BankService
             );
         } catch (GuzzleException $e) {
             echo $e->getMessage();
+
             return false;
         }
         $res->getBody();
         $resArray = json_decode($res->getBody(), true);
+
         return $resArray;
     }
 

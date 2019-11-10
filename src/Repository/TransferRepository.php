@@ -19,6 +19,17 @@ class TransferRepository extends ServiceEntityRepository
         parent::__construct($registry, Transfer::class);
     }
 
+    public function findByIsSent($transaction_quantity)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.is_sent = 0')
+            ->orderBy('t.id', 'ASC')
+            ->setMaxResults($transaction_quantity)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Transfer[] Returns an array of Transfer objects
     //  */

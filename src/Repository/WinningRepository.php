@@ -14,9 +14,22 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class WinningRepository extends ServiceEntityRepository
 {
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Winning::class);
+    }
+
+    public function getSumMoneyByUserId($userId)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.id_user = :id')
+            ->setParameter('id', $userId)
+            ->select('SUM(b.money) as moneySum')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**
