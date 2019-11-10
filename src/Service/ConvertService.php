@@ -4,7 +4,6 @@
 namespace App\Service;
 
 
-use App\Entity\Setting;
 use App\Entity\Winning;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,18 +11,23 @@ class ConvertService
 {
     private $em;
 
+    private $helper;
+
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+
+        $this->helper = new HelperService($em);
     }
 
-    public function convert($userId, $money)
+    public function convert(int $userId, float $money)
     {
         $moneySum = $this->em->getRepository(Winning::class)->getSumMoneyByUserId($userId);
-        $kConvert = $this->getSetting('k_convert');
 
-        if (isset($kConvert) && isset($moneySum[0])) {
+        $kConvert = $this->helper->getSetting('k_convert');
+
+        if (isset($kConvert) && count($moneySum[0]) >0) {
 
             $newBonus =  round($money / $kConvert, 0);
 
@@ -39,15 +43,4 @@ class ConvertService
         return true;
     }
 
-    private function getSetting($name) {
-        $settings = $this->em->getRepository(Setting::class)->findAll();
-        foreach ($settings as $setting ) {
-
-            if ($setting->getName() == $name) {
-                $value = $setting->getValue();
-            }
-        }
-
-        return isset($value) ? $value : false;
-    }
 }

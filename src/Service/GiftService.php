@@ -14,15 +14,19 @@ class GiftService
 {
     private $em;
 
+    private $helper;
+
     public $giftList;
 
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+
+        $this->helper = new HelperService($em);
     }
 
-    public function getGiftList($userId)
+    public function getGiftList(int $userId)
     {
         $giftList = $this->em->getRepository(Winning::class)
             ->findBy(
@@ -69,7 +73,7 @@ class GiftService
     return false;
     }
 
-    public function selectGift($userId)
+    public function selectGift(int $userId)
     {
         $i=0;
             do {
@@ -77,9 +81,9 @@ class GiftService
 
                 switch ($giftType) {
                     case 0:
-                        $moneyMin = $this->getSetting('money_min');
-                        $moneyMax = $this->getSetting('money_max');
-                        $moneyTotal = $this->getSetting('money_total');
+                        $moneyMin = $this->helper->getSetting('money_min');
+                        $moneyMax = $this->helper->getSetting('money_max');
+                        $moneyTotal = $this->helper->getSetting('money_total');
                         $money = round($this->mt_random_float($moneyMin, $moneyMax),2);
 
                         if ($money <= $moneyTotal) {
@@ -99,8 +103,8 @@ class GiftService
 
                         break;
                     case 1:
-                        $bonusMin = $this->getSetting('bonus_min');
-                        $bonusMax = $this->getSetting('bonus_max');
+                        $bonusMin = $this->helper->getSetting('bonus_min');
+                        $bonusMax = $this->helper->getSetting('bonus_max');
                         $bonus = mt_rand($bonusMin, $bonusMax);
                         $i = 10;
                         break;
@@ -154,25 +158,11 @@ class GiftService
         return true;
     }
 
-    private function mt_random_float($min, $max) {
+    private function mt_random_float(float $min, float $max) {
         $float_part = mt_rand(0, mt_getrandmax())/mt_getrandmax();
         $integer_part = mt_rand($min, $max - 1);
 
         return $integer_part + $float_part;
-    }
-
-    private function getSetting($name) {
-        $settings = $this->em->getRepository(Setting::class)->findAll();
-
-        foreach ($settings as $setting ) {
-
-            if ($setting->getName() == $name) {
-                $value = $setting->getValue();
-            }
-
-        }
-
-        return isset($value) ? $value : false;
     }
 
 }

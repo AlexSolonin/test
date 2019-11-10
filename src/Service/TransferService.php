@@ -18,25 +18,30 @@ class TransferService
 
     private $params;
 
+    private $helper;
+
 
     public function __construct(EntityManagerInterface $em,ParameterBagInterface $params)
     {
         $this->em = $em;
 
         $this->params = $params;
+
+        $this->helper = new HelperService($em);
+
     }
 
     public function sendTransfer()
     {
 
-        $transaction_quantity = $this->getSetting('transaction_quantity');
+        $transaction_quantity = $this->helper->getSetting('transaction_quantity');
         if ($transaction_quantity == false) {
             return false;
         }
 
         $transferList = $this->em->getRepository(Transfer::class)->findByIsSent((int)$transaction_quantity);
 
-        if (isset($transferList)) {
+        if (count($transferList) > 0) {
             foreach ($transferList as $transfer) {
                 $bankAccount = $this->em->getRepository(User::class)->findOneBy(
                     [
@@ -56,17 +61,6 @@ class TransferService
             }
         }
         return true;
-    }
-
-    private function getSetting($name) {
-        $settings = $this->em->getRepository(Setting::class)->findAll();
-        foreach ($settings as $setting ) {
-            if ($setting->getName() == $name) {
-                $value = $setting->getValue();
-            }
-        }
-
-        return isset($value) ? $value : false;
     }
 
 }

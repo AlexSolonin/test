@@ -18,7 +18,7 @@ class BankService
         $this->params = $params;
     }
 
-    public function sendTransfer($transferArray)
+    public function sendTransfer(array $transferArray)
     {
         $result = $this->sendPost($transferArray);
 
@@ -31,7 +31,7 @@ class BankService
         }
     }
 
-    public function sendPost($params)
+    public function sendPost(array $params)
     {
         $url = $this->params->get('url');
         $params = json_encode($params);
