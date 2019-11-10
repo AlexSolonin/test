@@ -5,6 +5,7 @@
 {% block body %}
     <h1>Personal Area</h1>
     <h2>User: {{ user.name }}</h2>
+
     <form name="button" method="post" action="{{ path('user_personal') }}">
         <input type="hidden" name="user_id" value="{{ user.id }}">
         <input type="hidden" name="start" value="">
@@ -36,23 +37,26 @@
                     <td>{{ prize.name }}</td>
                     <td>{{ prize.description }}</td>
                     <td>
+
                         <form name="button" method="post" action="{{ path('user_personal') }}">
                             <input type="hidden" name="prize_delete_id" value="{{ prize.id }}">
                             <input type="hidden" name="user_id" value="{{ user.id }}">
                             <button type="submit">Delete</button>
                         </form>
+
                     </td>
                     <td>
+
                         <form name="button" method="post" action="{{ path('user_personal') }}">
                             <input type="hidden" name="prize_delivery_id" value="{{ prize.id }}">
                             <input type="hidden" name="user_id" value="{{ user.id }}">
                             <button type="submit">Delivery</button>
                         </form>
+
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
 </table>
     <a href="{{ path('user_index') }}">back to main</a>
-
 {% endblock %}
