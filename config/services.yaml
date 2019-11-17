@@ -23,5 +23,11 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    app.consumer.gift_select:
+        class: App\Service\ConsumerService
+        autowire: true
+
+    OldSound\RabbitMqBundle\RabbitMq\ProducerInterface: '@old_sound_rabbit_mq.create_gift_select_producer'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
