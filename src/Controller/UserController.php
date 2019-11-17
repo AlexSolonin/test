@@ -8,6 +8,7 @@ use App\Form\UserType;
 use App\Service\ConvertService;
 use App\Service\GiftService;
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -114,9 +115,10 @@ class UserController extends AbstractController
      * @param Request $request
      * @param GiftService $giftService
      * @param ConvertService $convertService
+     * @param ProducerInterface $producer
      * @return Response
      */
-    public function personal(Request $request, GiftService $giftService, ConvertService $convertService): Response
+    public function personal(Request $request, GiftService $giftService, ConvertService $convertService, ProducerInterface $producer): Response
     {
         $userId = $request->request->get('user_id');
         $queryUser = $this->em->getRepository(User::class)
@@ -127,7 +129,7 @@ class UserController extends AbstractController
             );
 
         if (isset($_POST['user_id']) && isset($_POST['start'])) {
-            $giftService->selectGift($queryUser->getId());
+            $producer->publish(json_encode($queryUser->getId()));
         }
 
         if (isset($_POST['convert']) && isset($_POST['user_id'])) {

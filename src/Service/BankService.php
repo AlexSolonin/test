@@ -6,16 +6,23 @@ namespace App\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class BankService
 {
     private $params;
 
+    private $logger;
 
-    public function __construct(ParameterBagInterface $params)
+
+    public function __construct(
+        ParameterBagInterface $params,
+        LoggerInterface $logger)
     {
         $this->params = $params;
+
+        $this->logger = $logger;
     }
 
     public function sendTransfer(array $transferArray)
@@ -53,7 +60,7 @@ class BankService
                 ]
             );
         } catch (GuzzleException $e) {
-            echo $e->getMessage();
+            $this->logger->info('bank api info: ' . $e->getMessage());
 
             return false;
         }
